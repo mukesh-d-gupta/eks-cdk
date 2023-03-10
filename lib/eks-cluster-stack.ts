@@ -20,13 +20,19 @@ export class ClusterStack  extends cdk.Stack {
         clusterName: `demogo`,
         mastersRole: clusterAdmin,
         version: eks.KubernetesVersion.V1_24,
-        defaultCapacity: 1,
+        defaultCapacity: 3,
         defaultCapacityInstance: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL)
       });
 
-    cluster.addAutoScalingGroupCapacity('spot-group', {
-      instanceType: new ec2.InstanceType('t3.small'),
-      spotPrice: cdk.Stack.of(this).region==primaryRegion ? '0.0110' : '0.080'
+    // cluster.addAutoScalingGroupCapacity('spot-group', {
+    //   instanceType: new ec2.InstanceType('t3.small'),
+    //   spotPrice: cdk.Stack.of(this).region==primaryRegion ? '0.0110' : '0.080'
+    //   });
+      cluster.addAutoScalingGroupCapacity('spot-group', {
+        instanceType: new ec2.InstanceType('m5.large'),
+         minCapacity: 2,
+         machineImageType: eks.MachineImageType.BOTTLEROCKET,
+        spotPrice: cdk.Stack.of(this).region==primaryRegion ? '0.040' : '0.360'
       });
       
         this.cluster = cluster;
